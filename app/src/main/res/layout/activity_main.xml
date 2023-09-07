@@ -1,18 +1,233 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/app_color_light"
+    android:id="@+id/rlScreen"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+  <LinearLayout
+      android:id="@+id/lyPremium"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:layout_alignParentTop="true">
+      <TextView
+          android:id="@+id/tvPremium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="@color/contrast_data"
+          android:text="@string/premium"
+          android:textColor="@color/message_bg"
+          android:padding="8dp"
+          android:textAlignment="center"
+          android:fontFamily="@font/amaranth_regular"/>
+  </LinearLayout>
+    <ScrollView
+        android:id="@+id/svGame"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_below="@id/lyPremium"
+        android:paddingBottom="70dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/amaranth_bold"
+                android:text="@string/title"
+                android:textSize="26sp"
+                android:textColor="@color/app_color_regular"
+                android:textAlignment="center"
+                android:layout_marginTop="22dp"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_title_top"
+                android:text="@string/level"
+                android:textColor="@color/app_color_light"
+                android:fontFamily="@font/amaranth_bold"
+                android:textSize="20sp"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="6dp"
+                android:paddingTop="10dp"
+                android:textAlignment="center"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_title_bottom"
+                android:layout_marginBottom="12dp"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="6dp"
+                android:fontFamily="@font/amaranth_bold"
+                android:textColor="@color/app_color_light"
+                android:textAlignment="center"
+                android:paddingBottom="10dp"
+                android:text="1"
+                android:textSize="20sp"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="4"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp">
+                <TextView
+                    android:id="@+id/tvMovesTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_title_top"
+                    android:text="@string/moves"
+                    android:textColor="@color/app_color_light"
+                    android:fontFamily="@font/amaranth_regular"
+                    android:textAlignment="center"
+                    android:paddingTop="10dp"
+                    android:backgroundTint="@color/app_color_regular" />
+                    <TextView
+                        android:id="@+id/tvMovesData"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_title_bottom"
+                        android:text="0"
+                        android:textColor="@color/app_color_light"
+                        android:fontFamily="@font/amaranth_regular"
+                        android:textAlignment="center"
+                        android:paddingBottom="10dp"
+                        android:backgroundTint="@color/app_color_regular" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp">
+                    <TextView
+                        android:id="@+id/tvTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_title_top"
+                        android:text="@string/time"
+                        android:textColor="@color/app_color_light"
+                        android:fontFamily="@font/amaranth_regular"
+                        android:textAlignment="center"
+                        android:paddingTop="10dp"
+                        android:backgroundTint="@color/app_color_regular" />
+                    <TextView
+                        android:id="@+id/tvTimeData"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_title_bottom"
+                        android:text="00:00"
+                        android:textColor="@color/app_color_light"
+                        android:fontFamily="@font/amaranth_regular"
+                        android:textAlignment="center"
+                        android:paddingBottom="10dp"
+                        android:backgroundTint="@color/app_color_regular" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp">
+                    <TextView
+                        android:id="@+id/tvLivesTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_title_top"
+                        android:text="@string/lives"
+                        android:textColor="@color/app_color_light"
+                        android:fontFamily="@font/amaranth_regular"
+                        android:textAlignment="center"
+                        android:paddingTop="10dp"
+                        android:backgroundTint="@color/contrast_data" />
+                    <TextView
+                        android:id="@+id/tvLivesData"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_title_bottom"
+                        android:text="0"
+                        android:textColor="@color/app_color_light"
+                        android:fontFamily="@font/amaranth_regular"
+                        android:textAlignment="center"
+                        android:paddingBottom="10dp"
+                        android:backgroundTint="@color/contrast_data" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp">
+                    <TextView
+                        android:id="@+id/tvOptionsTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_title_top"
+                        android:text="@string/options"
+                        android:textColor="@color/app_color_light"
+                        android:fontFamily="@font/amaranth_regular"
+                        android:textAlignment="center"
+                        android:paddingTop="10dp"
+                        android:backgroundTint="@color/app_color_regular" />
+                    <TextView
+                        android:id="@+id/tvOptionsSeparator"
+                        android:layout_width="match_parent"
+                        android:layout_height="5dp"
+                        android:translationZ="22dp"
+                        android:background="@color/contrast_data"
+                        android:textColor="@color/app_color_light"
+                        android:fontFamily="@font/amaranth_regular"
+                        android:textAlignment="center"
+                        android:paddingTop="10dp"
+                        />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/tvOptionsData"
+                        android:layout_width="match_parent"
+                        android:layout_height="24dp"
+                        android:background="@drawable/bg_title_bottom"
+                        android:text="0"
+                        android:textColor="@color/app_color_light"
+                        android:fontFamily="@font/amaranth_regular"
+                        android:textAlignment="center"
+                        android:paddingBottom="10dp"
+                        android:backgroundTint="@color/app_color_regular" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/lyAdsBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>
