@@ -881,14 +881,66 @@
                     </TableRow>
 
                 </TableLayout>
-                <!--
+
                 <LinearLayout
-                    android:layout_width=""
-                    android:layout_height="">
+                    android:id="@+id/lvMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@color/message_bg"
+                    android:orientation="vertical"
+                    android:visibility="visible"
+                    android:layout_marginTop="20dp"
+                    >
+
+                    <TextView
+                        android:id="@+id/tvIntroLevel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Level: 1"
+                        android:fontFamily="@font/amaranth_regular"
+                        android:textSize="70sp"
+                        android:textColor="@color/app_color_dark"
+                        android:textAlignment="center"
+                        android:paddingTop="30dp"/>
+                    <TextView
+                        android:id="@+id/tvIntroLives"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Lives: 1"
+                        android:fontFamily="@font/amaranth_regular"
+                        android:textSize="45sp"
+                        android:textColor="@color/app_color_dark"
+                        android:textAlignment="center"
+                        android:paddingTop="30dp"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_title_top"
+                        android:text="Next Level"
+                        android:fontFamily="@font/amaranth_regular"
+                        android:textColor="@color/app_color_light"
+                        android:textAlignment="center"
+                        android:textSize="24sp"
+                        android:onClick="launchAction"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:paddingTop="10dp"/>
+                    <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_title_bottom"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:onClick="launchShareGame"
+                        android:src="@drawable/ic_share"
+                        android:layout_marginBottom="55dp"/>
+
 
                 </LinearLayout>
 
-                -->
+
 
             </RelativeLayout>
             <TextView
