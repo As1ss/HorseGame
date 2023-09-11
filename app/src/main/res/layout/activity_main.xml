@@ -233,7 +233,7 @@
                             android:layout_weight="1"
                             android:layout_height="44dp"
                             android:background="@color/white_cell"
-                            android:src="@drawable/horse"/>
+                           />
                         <ImageView
                             android:id="@+id/c17"
                             android:tag="c17"
