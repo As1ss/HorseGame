@@ -188,29 +188,46 @@
                         android:textAlignment="center"
                         android:paddingTop="10dp"
                         android:backgroundTint="@color/app_color_regular" />
-                    <TextView
+                    <View
                         android:id="@+id/tvOptionsSeparator"
                         android:layout_width="match_parent"
-                        android:layout_height="5dp"
+                        android:layout_height="1dp"
                         android:translationZ="22dp"
                         android:background="@color/contrast_data"
                         android:textColor="@color/app_color_light"
-                        android:fontFamily="@font/amaranth_regular"
                         android:textAlignment="center"
                         android:paddingTop="10dp"
                         />
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:background="@drawable/bg_title_bottom"
+                        android:orientation="horizontal"
+                        android:backgroundTint="@color/app_color_regular"
+                        android:gravity="center"
+                        android:translationY="-5dp">
+
                     <TextView
                         android:id="@+id/tvOptionsData"
-                        android:layout_width="match_parent"
-                        android:layout_height="24dp"
-                        android:background="@drawable/bg_title_bottom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="0"
                         android:textColor="@color/app_color_light"
                         android:fontFamily="@font/amaranth_regular"
                         android:textAlignment="center"
-                        android:paddingBottom="10dp"
-                        android:backgroundTint="@color/app_color_regular" />
+
+
+                        />
+                    <TextView
+                        android:id="@+id/tvBonusData"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/amaranth_regular"
+                        android:text=""
+                        android:textColor="@color/app_color_light"
+                       />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
