@@ -1,5 +1,6 @@
 package com.example.horsegame
 
+import android.graphics.Bitmap
 import android.graphics.Point
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,11 +12,15 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TableRow
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import java.sql.Time
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
+    private var bitmap: Bitmap? = null
+
     private var mHandler: Handler? = null
     private var timeInSeconds: Long = 0
     private var gaming = true
@@ -159,6 +164,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun launchShareGame(v: View) {
+        shareGame()
+    }
+
+    private fun shareGame() {
+
+        Toast.makeText(this, "You shared your score!!", Toast.LENGTH_SHORT).show()
+
+
+    }
 
     fun checkCellClicked(v: View) {
         var name = v.tag.toString()
@@ -243,7 +258,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkGameOver() {
         if (options == 0) {
-            if (bonus >0) {
+            if (bonus > 0) {
                 checkMovement = false
                 pintAllOptions()
 
