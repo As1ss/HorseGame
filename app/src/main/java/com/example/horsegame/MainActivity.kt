@@ -3,6 +3,8 @@ package com.example.horsegame
 import android.graphics.Point
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
@@ -10,8 +12,14 @@ import android.widget.LinearLayout
 import android.widget.TableRow
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import java.sql.Time
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
+    private var mHandler: Handler? = null
+    private var timeInSeconds: Long = 0
+    private var gaming = true
+
     private var width_bonus = 0
     private var cellSelected_x = 0
     private var cellSelected_y = 0
@@ -35,13 +43,17 @@ class MainActivity : AppCompatActivity() {
 
 
         initScreenGame()
-        resetBoard()
-        setFirstPosition()
+        startGame()
+
+
     }
+
+
     private fun initScreenGame() {
         setSizeBoard()
         hideMessage()
     }
+
     private fun resetBoard() {
         // 0 esta libre
         // 1 casilla marcada
@@ -70,6 +82,32 @@ class MainActivity : AppCompatActivity() {
          */
 
     }
+
+    private fun clearBoard() {
+        var iv: ImageView
+        var colorBlack = ContextCompat.getColor(
+            this,
+            resources.getIdentifier(nameColorBlack, "color", packageName)
+        )
+        var colorWhite = ContextCompat.getColor(
+            this,
+            resources.getIdentifier(nameColorWhite, "color", packageName)
+        )
+
+        for (i in 0 until board.size) {
+            for (j in 0 until board[i].size) {
+                iv = findViewById(resources.getIdentifier("c$i$j", "id", packageName))
+                iv.setImageResource(0)
+
+
+                if (checkColorCell(i, j) == "black")
+                    iv.setBackgroundColor(colorBlack)
+                else
+                    iv.setBackgroundColor(colorWhite)
+            }
+        }
+    }
+
     private fun setFirstPosition() {
         var x = 0
         var y = 0
@@ -80,10 +118,12 @@ class MainActivity : AppCompatActivity() {
 
         selectCell(x, y)
     }
+
     private fun hideMessage() {
         val lyMessage = findViewById<LinearLayout>(R.id.lvMessage)
         lyMessage.visibility = View.INVISIBLE
     }
+
     private fun setSizeBoard() {
         var iv: ImageView
 
@@ -120,8 +160,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-
     fun checkCellClicked(v: View) {
         var name = v.tag.toString()
         var x = name.subSequence(1, 2).toString().toInt()
@@ -129,6 +167,7 @@ class MainActivity : AppCompatActivity() {
 
         checkCell(x, y)
     }
+
     private fun checkCell(x: Int, y: Int) {
         var dif_x = x - cellSelected_x
         var dif_y = y - cellSelected_y
@@ -166,6 +205,7 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
     private fun selectCell(x: Int, y: Int) {
 
         moves--
@@ -180,7 +220,7 @@ class MainActivity : AppCompatActivity() {
             tvBonusData.text = " + $bonus"
         }
 
-
+        clearOptions()
         board[x][y] = 1
 
         paintHorseCell(cellSelected_x, cellSelected_y, "previous_cell")
@@ -203,17 +243,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkGameOver() {
         if (options == 0) {
-            if (bonus == 0) {
-                showMessage("Game over", "Try Again!", true)
-            } else {
+            if (bonus >0) {
                 checkMovement = false
                 pintAllOptions()
+
+            } else {
+                showMessage("Game over", "Try Again!", true)
             }
 
         }
 
     }
+
     private fun showMessage(title: String, action: String, gameOver: Boolean) {
+        gaming = false
         val lyMessage = findViewById<LinearLayout>(R.id.lvMessage)
         lyMessage.visibility = View.VISIBLE
 
@@ -234,6 +277,7 @@ class MainActivity : AppCompatActivity() {
         tvAction.text = action
 
     }
+
     private fun pintAllOptions() {
         for (i in 0 until board.size) {
             for (j in 0 until board[i].size) {
@@ -248,7 +292,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
 
     private fun growProgressBonus() {
@@ -289,8 +332,9 @@ class MainActivity : AppCompatActivity() {
             paintBonusCell(bonusCell_x, bonusCell_y)
         }
     }
-    
+
     private fun paintBonusCell(bonuscellX: Int, bonuscellY: Int) {
+
         var iv: ImageView =
             findViewById(resources.getIdentifier("c$bonuscellX$bonuscellY", "id", packageName))
         iv.setImageResource(R.drawable.bonus)
@@ -328,10 +372,9 @@ class MainActivity : AppCompatActivity() {
         for (i in 0 until board.size) {
             for (j in 0 until board[i].size) {
                 if (board[i][j] == 9 || board[i][j] == 2) {
-                    if (board[i][j] == 9) {
+                    if (board[i][j] == 9)
                         board[i][j] = 0
-                        clearOption(i, j)
-                    }
+                    clearOption(i, j)
 
 
                 }
@@ -410,6 +453,64 @@ class MainActivity : AppCompatActivity() {
         iv.setImageResource(R.drawable.horse)
 
 
+    }
+
+
+    private fun resetTime() {
+
+        mHandler?.removeCallbacks(chronometer)
+        timeInSeconds = 0
+        var tvTimeData = findViewById<TextView>(R.id.tvTimeData)
+        tvTimeData.text = "00:00"
+    }
+
+    private fun startTime() {
+        mHandler = Handler(Looper.getMainLooper())
+        chronometer.run()
+
+    }
+
+    private var chronometer: Runnable = object : Runnable {
+        override fun run() {
+            try {
+                if (gaming) {
+                    timeInSeconds++
+                    updateStopWatchView(timeInSeconds)
+                }
+
+            } finally {
+                mHandler!!.postDelayed(this, 1000L)
+            }
+        }
+    }
+
+    private fun updateStopWatchView(timeInSeconds: Long) {
+
+        val formattedTime = getFormattedStopWatch((timeInSeconds * 1000))
+        var tvTimeData = findViewById<TextView>(R.id.tvTimeData)
+        tvTimeData.text = formattedTime
+
+    }
+
+    private fun getFormattedStopWatch(ms: Long): String {
+        var miliSeconds = ms
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(miliSeconds)
+        miliSeconds -= TimeUnit.MINUTES.toMillis(minutes)
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(miliSeconds)
+        return "${if (minutes < 10) "0" else ""}$minutes:" +
+                "${if (seconds < 10) "0" else ""}$seconds"
+
+    }
+
+    private fun startGame() {
+
+        gaming = true
+        resetBoard()
+        clearBoard()
+        setFirstPosition()
+
+        resetTime()
+        startTime()
     }
 
 
