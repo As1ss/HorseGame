@@ -135,10 +135,41 @@ class MainActivity : AppCompatActivity() {
 
         if (moves > 0) {
             checkNewBonus()
-            //  checkGameOver(x,y)
+            checkGameOver(x, y)
+        } else
+            showMessage("You Win!!", "Next Level", false)
+
+    }
+
+    private fun checkGameOver(x: Int, y: Int) {
+        if (options == 0) {
+            if (bonus == 0) {
+                showMessage("Game over", "Try Again!", true)
+            }
         }
-        //  else
-        //     checkSuccesfullEnd()
+
+
+    }
+
+    private fun showMessage(title: String, action: String, gameOver: Boolean) {
+        val lyMessage = findViewById<LinearLayout>(R.id.lvMessage)
+        lyMessage.visibility = View.VISIBLE
+
+        var tvTitleMessage = findViewById<TextView>(R.id.tvTitleMessage)
+        tvTitleMessage.text = title
+
+        var score: String = ""
+        var tvTimeData = findViewById<TextView>(R.id.tvTimeData)
+        if (gameOver) {
+            score = "Score: ${(levelMoves - moves)}/ $levelMoves"
+        } else {
+            score = tvTimeData.text.toString()
+        }
+        var tvScoreMessage = findViewById<TextView>(R.id.tvScoreMessage)
+        tvScoreMessage.text = score
+
+        var tvAction = findViewById<TextView>(R.id.tvAction)
+        tvAction.text = action
 
     }
 
@@ -173,7 +204,7 @@ class MainActivity : AppCompatActivity() {
                 bonusCell_y = (0..7).random()
 
 
-                if (board[bonusCell_x][bonusCell_y] == 0)  bonusCell = true
+                if (board[bonusCell_x][bonusCell_y] == 0) bonusCell = true
 
             }
             board[bonusCell_x][bonusCell_y] = 2
@@ -260,7 +291,6 @@ class MainActivity : AppCompatActivity() {
                 if (board[option_x][option_y] == 0) board[option_x][option_y] = 9
 
 
-
             }
         }
     }
@@ -306,10 +336,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun initScreenGame() {
         setSizeBoard()
-        hide_message()
+        hideMessage()
     }
 
-    private fun hide_message() {
+    private fun hideMessage() {
         val lyMessage = findViewById<LinearLayout>(R.id.lvMessage)
         lyMessage.visibility = View.INVISIBLE
     }

@@ -911,7 +911,7 @@
                     >
 
                     <TextView
-                        android:id="@+id/tvIntroLevel"
+                        android:id="@+id/tvTitleMessage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Level: 1"
@@ -921,7 +921,7 @@
                         android:textAlignment="center"
                         android:paddingTop="30dp"/>
                     <TextView
-                        android:id="@+id/tvIntroLives"
+                        android:id="@+id/tvScoreMessage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Lives: 1"
@@ -931,6 +931,7 @@
                         android:textAlignment="center"
                         android:paddingTop="30dp"/>
                     <TextView
+                        android:id="@+id/tvAction"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_title_top"
