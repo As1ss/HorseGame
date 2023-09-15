@@ -25,6 +25,9 @@ class MainActivity : AppCompatActivity() {
     private var moves = 64 // poruqe el tablero es 8x8
     private var options = 0
     private var bonus = 0
+
+    private var checkMovement = true
+
     private lateinit var board: Array<IntArray>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +38,10 @@ class MainActivity : AppCompatActivity() {
         resetBoard()
         setFirstPosition()
     }
-
+    private fun initScreenGame() {
+        setSizeBoard()
+        hideMessage()
+    }
     private fun resetBoard() {
         // 0 esta libre
         // 1 casilla marcada
@@ -64,38 +70,6 @@ class MainActivity : AppCompatActivity() {
          */
 
     }
-
-
-    fun checkCellClicked(v: View) {
-        var name = v.tag.toString()
-        var x = name.subSequence(1, 2).toString().toInt()
-        var y = name.subSequence(2, 3).toString().toInt()
-
-        checkCell(x, y)
-    }
-
-    private fun checkCell(x: Int, y: Int) {
-        var dif_x = x - cellSelected_x
-        var dif_y = y - cellSelected_y
-
-        var checkTrue = false
-
-        if (dif_x == 1 && dif_y == 2) checkTrue = true //right - top long
-        if (dif_x == 1 && dif_y == -2) checkTrue = true //right - bottom long
-        if (dif_x == 2 && dif_y == 1) checkTrue = true //right long - top
-        if (dif_x == 2 && dif_y == -1) checkTrue = true //right long - top
-        if (dif_x == -1 && dif_y == 2) checkTrue = true //left - top long
-        if (dif_x == -1 && dif_y == -2) checkTrue = true //left - bottom long
-        if (dif_x == -2 && dif_y == 1) checkTrue = true //left long - top
-        if (dif_x == -2 && dif_y == -1) checkTrue = true //left long - bottom
-
-        if (board[x][y] == 1) checkTrue = false
-
-        if (checkTrue) selectCell(x, y)
-
-
-    }
-
     private fun setFirstPosition() {
         var x = 0
         var y = 0
@@ -106,7 +80,92 @@ class MainActivity : AppCompatActivity() {
 
         selectCell(x, y)
     }
+    private fun hideMessage() {
+        val lyMessage = findViewById<LinearLayout>(R.id.lvMessage)
+        lyMessage.visibility = View.INVISIBLE
+    }
+    private fun setSizeBoard() {
+        var iv: ImageView
 
+        val display = windowManager.defaultDisplay
+        val size = Point()
+        display.getSize(size)
+        val width = size.x
+
+        var width_dp = (width / resources.displayMetrics.density)
+        var lateralMarginDP = 0
+        val width_cell = (width_dp - lateralMarginDP) / 8
+        val height_cell = width_cell
+
+        width_bonus = 2 * width_cell.toInt()
+
+        for (i in 0..7) {
+            for (j in 0..7) {
+                iv = findViewById(resources.getIdentifier("c$i$j", "id", packageName))
+
+                var height = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    height_cell,
+                    resources.displayMetrics
+                ).toInt()
+                var width = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    width_cell,
+                    resources.displayMetrics
+                ).toInt()
+
+                iv.setLayoutParams(TableRow.LayoutParams(width, height))
+            }
+        }
+    }
+
+
+
+
+    fun checkCellClicked(v: View) {
+        var name = v.tag.toString()
+        var x = name.subSequence(1, 2).toString().toInt()
+        var y = name.subSequence(2, 3).toString().toInt()
+
+        checkCell(x, y)
+    }
+    private fun checkCell(x: Int, y: Int) {
+        var dif_x = x - cellSelected_x
+        var dif_y = y - cellSelected_y
+
+        var checkTrue = true
+
+        if (checkMovement) {
+
+            checkTrue = false
+
+            if (dif_x == 1 && dif_y == 2) checkTrue = true //right - top long
+            if (dif_x == 1 && dif_y == -2) checkTrue = true //right - bottom long
+            if (dif_x == 2 && dif_y == 1) checkTrue = true //right long - top
+            if (dif_x == 2 && dif_y == -1) checkTrue = true //right long - top
+            if (dif_x == -1 && dif_y == 2) checkTrue = true //left - top long
+            if (dif_x == -1 && dif_y == -2) checkTrue = true //left - bottom long
+            if (dif_x == -2 && dif_y == 1) checkTrue = true //left long - top
+            if (dif_x == -2 && dif_y == -1) checkTrue = true //left long - bottom
+        } else {
+            if (board[x][y] != 1) {
+                bonus--
+                var tvBonusData = findViewById<TextView>(R.id.tvBonusData)
+                tvBonusData.text = " + $bonus"
+
+                if (bonus == 0) tvBonusData.text = ""
+            }
+        }
+
+
+
+
+        if (board[x][y] == 1) checkTrue = false
+
+        if (checkTrue) selectCell(x, y)
+
+
+    }
     private fun selectCell(x: Int, y: Int) {
 
         moves--
@@ -132,25 +191,28 @@ class MainActivity : AppCompatActivity() {
         clearOptions()
         paintHorseCell(x, y, "selected_cell")
         checkOptions(x, y)
+        checkMovement = true
 
         if (moves > 0) {
             checkNewBonus()
-            checkGameOver(x, y)
+            checkGameOver()
         } else
             showMessage("You Win!!", "Next Level", false)
 
     }
 
-    private fun checkGameOver(x: Int, y: Int) {
+    private fun checkGameOver() {
         if (options == 0) {
             if (bonus == 0) {
                 showMessage("Game over", "Try Again!", true)
+            } else {
+                checkMovement = false
+                pintAllOptions()
             }
+
         }
 
-
     }
-
     private fun showMessage(title: String, action: String, gameOver: Boolean) {
         val lyMessage = findViewById<LinearLayout>(R.id.lvMessage)
         lyMessage.visibility = View.VISIBLE
@@ -172,6 +234,22 @@ class MainActivity : AppCompatActivity() {
         tvAction.text = action
 
     }
+    private fun pintAllOptions() {
+        for (i in 0 until board.size) {
+            for (j in 0 until board[i].size) {
+                if (board[i][j] != 1) {
+                    paintOption(i, j)
+                }
+
+                if (board[i][j] == 0) {
+                    board[i][j] = 9
+                }
+
+            }
+        }
+    }
+
+
 
     private fun growProgressBonus() {
         var moves_done = levelMoves - moves
@@ -211,7 +289,7 @@ class MainActivity : AppCompatActivity() {
             paintBonusCell(bonusCell_x, bonusCell_y)
         }
     }
-
+    
     private fun paintBonusCell(bonuscellX: Int, bonuscellY: Int) {
         var iv: ImageView =
             findViewById(resources.getIdentifier("c$bonuscellX$bonuscellY", "id", packageName))
@@ -286,7 +364,7 @@ class MainActivity : AppCompatActivity() {
         if (option_x < 8 && option_y < 8 && option_x >= 0 && option_y >= 0) {
             if (board[option_x][option_y] == 0 || board[option_x][option_y] == 2) {
                 options++
-                paintOptions(option_x, option_y)
+                paintOption(option_x, option_y)
 
                 if (board[option_x][option_y] == 0) board[option_x][option_y] = 9
 
@@ -295,7 +373,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun paintOptions(x: Int, y: Int) {
+    private fun paintOption(x: Int, y: Int) {
         var iv: ImageView = findViewById(resources.getIdentifier("c$x$y", "id", packageName))
 
         if (checkColorCell(x, y) == "black")
@@ -334,48 +412,5 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun initScreenGame() {
-        setSizeBoard()
-        hideMessage()
-    }
 
-    private fun hideMessage() {
-        val lyMessage = findViewById<LinearLayout>(R.id.lvMessage)
-        lyMessage.visibility = View.INVISIBLE
-    }
-
-    private fun setSizeBoard() {
-        var iv: ImageView
-
-        val display = windowManager.defaultDisplay
-        val size = Point()
-        display.getSize(size)
-        val width = size.x
-
-        var width_dp = (width / resources.displayMetrics.density)
-        var lateralMarginDP = 0
-        val width_cell = (width_dp - lateralMarginDP) / 8
-        val height_cell = width_cell
-
-        width_bonus = 2 * width_cell.toInt()
-
-        for (i in 0..7) {
-            for (j in 0..7) {
-                iv = findViewById(resources.getIdentifier("c$i$j", "id", packageName))
-
-                var height = TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    height_cell,
-                    resources.displayMetrics
-                ).toInt()
-                var width = TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    width_cell,
-                    resources.displayMetrics
-                ).toInt()
-
-                iv.setLayoutParams(TableRow.LayoutParams(width, height))
-            }
-        }
-    }
 }
