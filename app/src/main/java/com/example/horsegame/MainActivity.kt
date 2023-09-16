@@ -124,21 +124,32 @@ class MainActivity : AppCompatActivity() {
     private fun setFirstPosition() {
         var x = 0
         var y = 0
-        x = (0..7).random()
-        y = (0..7).random()
+        var firstPosition = false
+        while (firstPosition == false) {
+            x = (0..7).random()
+            y = (0..7).random()
+            if (board[x][y] == 0) firstPosition = true
+            checkOptions(x, y)
+
+            if (options == 0) firstPosition = false
+
+        }
+
+
         cellSelected_x = x
         cellSelected_y = y
-
         selectCell(x, y)
+
+
     }
 
     private fun setLevel() {
         if (nextLevel) {
             level++
-            Log.d("Debug","LEVEL: $level")
+            Log.d("Debug", "LEVEL: $level")
 
         } else {
-            Log.d("Debug","LEVEL: $level")
+            Log.d("Debug", "LEVEL: $level")
             lives--
             if (lives < 1) {
                 level = 1
@@ -176,18 +187,18 @@ class MainActivity : AppCompatActivity() {
         var movesRequired = 0
         when (level) {
             1 -> movesRequired = 8
-            2 -> movesRequired = 10
-            3 -> movesRequired = 12
-            4 -> movesRequired = 10
-            5 -> movesRequired = 10
-            6 -> movesRequired = 12
-            7 -> movesRequired = 5
-            8 -> movesRequired = 7
-            9 -> movesRequired = 9
-            10 -> movesRequired = 8
-            11 -> movesRequired = 1000
-            12 -> movesRequired = 5
-            13 -> movesRequired = 5
+            2 -> movesRequired = 7
+            3 -> movesRequired = 8
+            4 -> movesRequired = 4
+            5 -> movesRequired = 6
+            //  6 -> movesRequired = 12
+            //   7 -> movesRequired = 5
+            //   8 -> movesRequired = 7
+            //   9 -> movesRequired = 9
+            //  10 -> movesRequired = 8
+            //   11 -> movesRequired = 1000
+            //  12 -> movesRequired = 5
+            //   13 -> movesRequired = 5
         }
 
         return movesRequired
@@ -200,16 +211,86 @@ class MainActivity : AppCompatActivity() {
             3 -> levelMoves = 32
             4 -> levelMoves = 16
             5 -> levelMoves = 48
-            6 -> levelMoves = 36
-            7 -> levelMoves = 48
-            8 -> levelMoves = 49
-            9 -> levelMoves = 59
-            10 -> levelMoves = 48
-            11 -> levelMoves = 64
-            12 -> levelMoves = 48
-            13 -> levelMoves = 48
+            //  6 -> levelMoves = 36
+            //  7 -> levelMoves = 48
+            //  8 -> levelMoves = 49
+            //  9 -> levelMoves = 59
+            //  10 -> levelMoves = 48
+            //   11 -> levelMoves = 64
+            //   12 -> levelMoves = 48
+            //  13 -> levelMoves = 48
         }
     }
+
+    private fun setBoardLevel() {
+        when (level) {
+            2 -> paintLevel_2()
+            3 -> paintLevel_3()
+            4 -> paintLevel_4()
+            5 -> paintLevel_5()
+        }
+
+    }
+
+    private fun paintLevel_2() {
+        paintColumn(6)
+    }
+
+    private fun paintLevel_3() {
+        paintColumn(4)
+        paintColumn(5)
+        paintColumn(6)
+        paintColumn(7)
+    }
+
+    private fun paintLevel_4() {
+
+        paintRow(2)
+        paintRow(4)
+        paintRow(6)
+
+    }
+
+    private fun paintLevel_5() {
+
+
+        paintDiagonal()
+        paintInverseDiagonal()
+
+
+    }
+
+    private fun paintColumn(column: Int) {
+        for (i in 0..7) {
+            board[column][i] = 1
+            paintHorseCell(column, i, "previous_cell")
+        }
+
+    }
+
+    private fun paintRow(row: Int) {
+        for (i in 0..7) {
+            board[i][row] = 1
+            paintHorseCell(i, row, "previous_cell")
+        }
+
+    }
+
+    private fun paintDiagonal() {
+        for (i in 0..7) {
+            board[i][i] = 1
+            paintHorseCell(i, i, "previous_cell")
+        }
+    }
+
+    private fun paintInverseDiagonal() {
+        for (i in 0..7) {
+            val j = 7 - i // Calculate the corresponding column index
+            board[i][j] = 1
+            paintHorseCell(i, j, "previous_cell")
+        }
+    }
+
 
     private fun hideMessage(start: Boolean) {
         val lyMessage = findViewById<LinearLayout>(R.id.lvMessage)
@@ -367,7 +448,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showMessage(title: String, action: String, gameOver: Boolean) {
         gaming = false
-        nextLevel = gameOver==false
+        nextLevel = gameOver == false
 
         val lyMessage = findViewById<LinearLayout>(R.id.lvMessage)
         lyMessage.visibility = View.VISIBLE
@@ -619,11 +700,16 @@ class MainActivity : AppCompatActivity() {
         setLevel()
 
 
+
+        level = 5
+
         setLevelParameters()
 
 
         resetBoard()
         clearBoard()
+
+        setBoardLevel()
 
 
         setFirstPosition()
