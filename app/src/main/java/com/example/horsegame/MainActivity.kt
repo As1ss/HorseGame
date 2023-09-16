@@ -701,7 +701,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        level = 5
+       
 
         setLevelParameters()
 
