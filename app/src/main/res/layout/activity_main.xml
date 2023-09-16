@@ -60,6 +60,7 @@
                 android:textAlignment="center"
                 />
             <TextView
+                android:id="@+id/tvLevelNumber"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_title_bottom"

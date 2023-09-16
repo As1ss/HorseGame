@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
@@ -19,7 +20,7 @@ import java.sql.Time
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
-    private var bitmap: Bitmap? = null
+
 
     private var mHandler: Handler? = null
     private var timeInSeconds: Long = 0
@@ -33,9 +34,16 @@ class MainActivity : AppCompatActivity() {
     private var nameColorBlack = "black_cell"
     private var nameColorWhite = "white_cell"
 
-    private var levelMoves = 64
-    private var movesRequired = 4
-    private var moves = 64 // poruqe el tablero es 8x8
+
+    private var nextLevel = false
+    private var level = 1
+    private var scoreLevel = 1
+    private var levelMoves = 0
+    private var movesRequired = 0
+    private var moves = 0
+    private var lives = 1
+    private var scoreLives = 1
+
     private var options = 0
     private var bonus = 0
 
@@ -56,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initScreenGame() {
         setSizeBoard()
-        hideMessage()
+        hideMessage(false)
     }
 
     private fun resetBoard() {
@@ -124,9 +132,92 @@ class MainActivity : AppCompatActivity() {
         selectCell(x, y)
     }
 
-    private fun hideMessage() {
+    private fun setLevel() {
+        if (nextLevel) {
+            level++
+            Log.d("Debug","LEVEL: $level")
+
+        } else {
+            Log.d("Debug","LEVEL: $level")
+            lives--
+            if (lives < 1) {
+                level = 1
+                lives = 1
+            }
+        }
+
+    }
+
+    private fun setLevelParameters() {
+        var tvLiveData = findViewById<TextView>(R.id.tvLivesData)
+        tvLiveData.text = lives.toString()
+
+        scoreLives = lives
+
+        var tvLevelNumber = findViewById<TextView>(R.id.tvLevelNumber)
+        tvLevelNumber.text = level.toString()
+
+        scoreLevel = level
+
+        bonus = 0
+        var tvBonusData = findViewById<TextView>(R.id.tvBonusData)
+        tvBonusData.text = ""
+
+
+        setLevelMoves()
+        moves = levelMoves
+
+        movesRequired = setMovesRequired()
+
+
+    }
+
+    private fun setMovesRequired(): Int {
+        var movesRequired = 0
+        when (level) {
+            1 -> movesRequired = 8
+            2 -> movesRequired = 10
+            3 -> movesRequired = 12
+            4 -> movesRequired = 10
+            5 -> movesRequired = 10
+            6 -> movesRequired = 12
+            7 -> movesRequired = 5
+            8 -> movesRequired = 7
+            9 -> movesRequired = 9
+            10 -> movesRequired = 8
+            11 -> movesRequired = 1000
+            12 -> movesRequired = 5
+            13 -> movesRequired = 5
+        }
+
+        return movesRequired
+    }
+
+    private fun setLevelMoves() {
+        when (level) {
+            1 -> levelMoves = 64
+            2 -> levelMoves = 56
+            3 -> levelMoves = 32
+            4 -> levelMoves = 16
+            5 -> levelMoves = 48
+            6 -> levelMoves = 36
+            7 -> levelMoves = 48
+            8 -> levelMoves = 49
+            9 -> levelMoves = 59
+            10 -> levelMoves = 48
+            11 -> levelMoves = 64
+            12 -> levelMoves = 48
+            13 -> levelMoves = 48
+        }
+    }
+
+    private fun hideMessage(start: Boolean) {
         val lyMessage = findViewById<LinearLayout>(R.id.lvMessage)
         lyMessage.visibility = View.INVISIBLE
+
+        if (start) {
+            startGame()
+        }
     }
 
     private fun setSizeBoard() {
@@ -166,6 +257,10 @@ class MainActivity : AppCompatActivity() {
 
     fun launchShareGame(v: View) {
         shareGame()
+    }
+
+    fun launchAction(v: View) {
+        hideMessage(true)
     }
 
     private fun shareGame() {
@@ -272,6 +367,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun showMessage(title: String, action: String, gameOver: Boolean) {
         gaming = false
+        nextLevel = gameOver==false
+
         val lyMessage = findViewById<LinearLayout>(R.id.lvMessage)
         lyMessage.visibility = View.VISIBLE
 
@@ -519,13 +616,22 @@ class MainActivity : AppCompatActivity() {
 
     private fun startGame() {
 
-        gaming = true
+        setLevel()
+
+
+        setLevelParameters()
+
+
         resetBoard()
         clearBoard()
+
+
         setFirstPosition()
 
         resetTime()
         startTime()
+
+        gaming = true
     }
 
 
