@@ -1,5 +1,6 @@
 package com.example.horsegame
 
+import android.content.ContentValues.TAG
 import android.graphics.Bitmap
 import android.graphics.Point
 import androidx.appcompat.app.AppCompatActivity
@@ -16,10 +17,22 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import java.sql.Time
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
+
+    private var mInterstitialAd: InterstitialAd? = null
+    private var unloadedAd = true
 
 
     private var mHandler: Handler? = null
@@ -56,9 +69,82 @@ class MainActivity : AppCompatActivity() {
 
 
         initScreenGame()
+        initAds()
+
         startGame()
 
 
+    }
+
+    private fun initAds() {
+        MobileAds.initialize(this) {}
+
+        var adView = AdView(this)
+        adView.setAdSize(AdSize.BANNER)
+        adView.adUnitId = "ca-app-pub-3940256099942544/6300978111"
+
+        val lyAdsBanner = findViewById<LinearLayout>(R.id.lyAdsBanner)
+        lyAdsBanner.addView(adView)
+
+
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
+    }
+
+    private fun showInterstitialAd() {
+        if (mInterstitialAd != null) {
+            unloadedAd = true
+            mInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdClicked() {
+                    // Called when a click is recorded for an ad.
+                    // Log.d(TAG, "Ad was clicked.")
+                }
+
+                override fun onAdDismissedFullScreenContent() {
+                    // Called when ad is dismissed.
+                    //  Log.d(TAG, "Ad dismissed fullscreen content.")
+                    mInterstitialAd = null
+                }
+
+                override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+                    // Called when ad fails to show.
+                    // Log.e(TAG, "Ad failed to show fullscreen content.")
+                    mInterstitialAd = null
+                }
+
+                override fun onAdImpression() {
+                    // Called when an impression is recorded for an ad.
+                    // Log.d(TAG, "Ad recorded an impression.")
+                }
+
+                override fun onAdShowedFullScreenContent() {
+                    // Called when ad is shown.
+                    //  Log.d(TAG, "Ad showed fullscreen content.")
+                }
+            }
+            mInterstitialAd?.show(this)
+        }
+    }
+
+    private fun getReadyAds() {
+        var adRequest = AdRequest.Builder().build()
+
+        unloadedAd = false
+        InterstitialAd.load(
+            this,
+            "ca-app-pub-3940256099942544/1033173712",
+            adRequest,
+            object : InterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    //Log.d(TAG, adError?.toString())
+                    mInterstitialAd = null
+                }
+
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    // Log.d(TAG, "Ad was loaded.")
+                    mInterstitialAd = interstitialAd
+                }
+            })
     }
 
 
@@ -146,10 +232,8 @@ class MainActivity : AppCompatActivity() {
     private fun setLevel() {
         if (nextLevel) {
             level++
-            Log.d("Debug", "LEVEL: $level")
-
+            setLives()
         } else {
-            Log.d("Debug", "LEVEL: $level")
             lives--
             if (lives < 1) {
                 level = 1
@@ -157,6 +241,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    private fun setLives() {
+        when (level) {
+            1 -> lives = 1
+            2 -> lives = 4
+            3 -> lives = 3
+            4 -> lives = 3
+            5 -> lives = 4
+        }
     }
 
     private fun setLevelParameters() {
@@ -428,7 +522,9 @@ class MainActivity : AppCompatActivity() {
             checkNewBonus()
             checkGameOver()
         } else
+
             showMessage("You Win!!", "Next Level", false)
+
 
     }
 
@@ -459,6 +555,7 @@ class MainActivity : AppCompatActivity() {
         var score: String = ""
         var tvTimeData = findViewById<TextView>(R.id.tvTimeData)
         if (gameOver) {
+            showInterstitialAd()
             score = "Score: ${(levelMoves - moves)}/ $levelMoves"
         } else {
             score = tvTimeData.text.toString()
@@ -697,11 +794,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun startGame() {
 
+        if (unloadedAd) {
+            getReadyAds()
+        }
+
         setLevel()
 
-
-
-       
 
         setLevelParameters()
 
